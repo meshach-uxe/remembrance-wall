@@ -60,11 +60,7 @@ export default function LandingPage() {
           </p>
         </div>
         <div className="flex gap-4">
-          <Link href="/admin">
-            <button className="flex items-center gap-2 px-4 py-2 text-xs font-medium text-white/50 hover:text-white transition-colors">
-              <Lock size={14} /> Admin
-            </button>
-          </Link>
+          {/* Admin link hidden for production */}
         </div>
       </nav>
 
