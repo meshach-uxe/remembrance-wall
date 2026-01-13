@@ -152,17 +152,42 @@ const SphereImageGrid: React.FC<SphereImageGridProps> = ({
     const [selectedImage, setSelectedImage] = useState<ImageData | null>(null);
     const [imagePositions, setImagePositions] = useState<SphericalPosition[]>([]);
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+    const [dynamicSize, setDynamicSize] = useState(containerSize);
 
     const containerRef = useRef<HTMLDivElement>(null);
     const lastMousePos = useRef<MousePosition>({ x: 0, y: 0 });
     const animationFrame = useRef<number | null>(null);
 
+    // Update dynamic size on resize
+    useEffect(() => {
+        if (!containerRef.current) return;
+
+        const updateSize = () => {
+            if (containerRef.current) {
+                const { width } = containerRef.current.getBoundingClientRect();
+                // If the container is effectively hidden or 0, don't update to 0 to avoid NaNs
+                if (width > 0) setDynamicSize(width);
+            }
+        };
+
+        // Initial sizing
+        updateSize();
+
+        const observer = new ResizeObserver(updateSize);
+        observer.observe(containerRef.current);
+
+        return () => observer.disconnect();
+    }, []);
+
     // ==========================================
     // COMPUTED VALUES
     // ==========================================
 
-    const actualSphereRadius = sphereRadius || containerSize * 0.5;
-    const baseImageSize = containerSize * baseImageScale;
+    // Use dynamicSize instead of static containerSize for calculations
+    const currentSize = dynamicSize;
+    // If sphereRadius is provided explicitly, use it. Otherwise derive from current width.
+    const actualSphereRadius = sphereRadius ? sphereRadius : currentSize * 0.45;
+    const baseImageSize = currentSize * baseImageScale;
 
     // ==========================================
     // UTILITY FUNCTIONS
@@ -319,7 +344,7 @@ const SphereImageGrid: React.FC<SphereImageGridProps> = ({
         }
 
         return adjustedPositions;
-    }, [imagePositions, rotation, actualSphereRadius, baseImageSize]);
+    }, [imagePositions, rotation, actualSphereRadius, baseImageSize, currentSize]);
 
     const clampRotationSpeed = useCallback((speed: number): number => {
         return Math.max(-maxRotationSpeed, Math.min(maxRotationSpeed, speed));
@@ -519,8 +544,8 @@ const SphereImageGrid: React.FC<SphereImageGridProps> = ({
                 style={{
                     width: `${imageSize}px`,
                     height: `${imageSize}px`,
-                    left: `${containerSize / 2 + position.x}px`,
-                    top: `${containerSize / 2 + position.y}px`,
+                    left: `${currentSize / 2 + position.x}px`,
+                    top: `${currentSize / 2 + position.y}px`,
                     opacity: position.fadeOpacity,
                     transform: `translate(-50%, -50%) scale(${finalScale})`,
                     zIndex: position.zIndex
@@ -540,7 +565,7 @@ const SphereImageGrid: React.FC<SphereImageGridProps> = ({
                 </div>
             </div>
         );
-    }, [worldPositions, baseImageSize, containerSize, hoveredIndex]);
+    }, [worldPositions, baseImageSize, currentSize, hoveredIndex]);
 
     const renderSpotlightModal = () => {
         if (!selectedImage) return null;
@@ -639,9 +664,11 @@ const SphereImageGrid: React.FC<SphereImageGridProps> = ({
                 ref={containerRef}
                 className={`relative select-none cursor-grab active:cursor-grabbing ${className}`}
                 style={{
-                    width: containerSize,
-                    height: containerSize,
-                    perspective: `${perspective}px`
+                    width: '100%',
+                    height: '100%',
+                    aspectRatio: '1 / 1',
+                    perspective: `${perspective}px`,
+                    maxWidth: containerSize ? `${containerSize}px` : 'none'
                 }}
                 onMouseDown={handleMouseDown}
                 onTouchStart={handleTouchStart}

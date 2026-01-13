@@ -50,8 +50,8 @@ export default function LandingPage() {
       <ShootingStars starColor="#22c55e" trailColor="#ffffff" minSpeed={15} maxSpeed={35} />
 
       {/* 2. Header / Navigation */}
-      <nav className="absolute top-0 left-0 right-0 z-20 p-6 flex justify-between items-center">
-        <div className="flex flex-col">
+      <nav className="absolute top-0 left-0 right-0 z-20 p-6 flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0">
+        <div className="flex flex-col items-center md:items-start text-center md:text-left">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tighter text-white">
             National Remembrance Day
           </h1>
@@ -69,28 +69,27 @@ export default function LandingPage() {
       </nav>
 
       {/* 3. Main Content - Sphere */}
-      <main className="relative z-10 w-full h-full flex flex-col items-center justify-center">
-        <div className="w-full max-w-[1000px] aspect-square flex items-center justify-center">
+      <main className="relative z-10 w-full h-full flex flex-col items-center justify-center p-4">
+        <div className="w-full md:max-w-[1000px] aspect-square flex items-center justify-center">
           <SphereImageGrid
             images={memories}
-            containerSize={800}
-            sphereRadius={320}
             baseImageScale={0.15}
             autoRotate={true}
             autoRotateSpeed={0.08}
             dragSensitivity={0.8}
+            className="w-full h-full"
           />
         </div>
 
-        <div className="absolute bottom-12 right-12 z-20 flex flex-col items-end gap-4">
-          <p className="text-white/60 text-sm italic text-right">
+        <div className="absolute bottom-6 right-6 md:bottom-12 md:right-12 z-20 flex flex-col items-end gap-3 md:gap-4 pointer-events-none">
+          <p className="text-white/60 text-xs md:text-sm italic text-right">
             "We will not forget." #SaloneDaeMemba
           </p>
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="group relative px-8 py-3 bg-white text-slate-900 rounded-full font-bold shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.6)] transition-all duration-300 flex items-center gap-2"
+            className="pointer-events-auto group relative px-6 py-2 md:px-8 md:py-3 bg-white text-slate-900 rounded-full font-bold shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.6)] transition-all duration-300 flex items-center gap-2 text-sm md:text-base"
           >
-            <Plus size={20} className="group-hover:rotate-90 transition-transform duration-300" />
+            <Plus size={18} className="group-hover:rotate-90 transition-transform duration-300 md:w-5 md:h-5" />
             Add A Memory
           </button>
         </div>
