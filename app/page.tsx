@@ -66,7 +66,7 @@ export default function LandingPage() {
 
       {/* 3. Main Content - Sphere */}
       <main className="relative z-10 w-full h-full flex flex-col items-center justify-center p-4">
-        <div className="w-full md:max-w-[1000px] aspect-square flex items-center justify-center">
+        <div className="w-full md:w-auto md:h-[85vh] aspect-square flex items-center justify-center">
           <SphereImageGrid
             images={memories}
             baseImageScale={0.15}
